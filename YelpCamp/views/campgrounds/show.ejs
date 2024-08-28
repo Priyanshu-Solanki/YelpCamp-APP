@@ -1,0 +1,27 @@
+<% layout('layouts/boilerplate') %>
+    <div class="row">
+        <div class="col-10 offset-1 col-md-6 offset-md-3 mb-5">
+            <div class="card">
+                <img src="<%= campground.image  %>" alt="">
+                <div class="card-body">
+                    <h3>
+                        <%= campground.title %>
+                    </h3>
+                    <p>
+                        <%= campground.description %>
+                    </p>
+                    <h5>LOCATION : <%= campground.location %>
+                    </h5>
+                    <h5>PRICE : <%= campground.price %> INR/Day</h5>
+                    <form action="/campgrounds/<%= campground.id %>?_method=DELETE" method="post">
+                        <button class="btn btn-danger my-1">DELETE</button>
+                        <a class="btn btn-primary" href="/campgrounds/<%= campground.id %>/edit">EDIT
+                            DETAILS</a>
+                    </form>
+                </div>
+                <div class="card-footer text-muted">
+                     <%= Math.floor(Math.random() * 10) + 1%> Days Ago
+                </div>
+            </div>
+        </div>
+    </div>
