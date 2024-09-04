@@ -14,12 +14,18 @@ const flash = require('connect-flash')
 const passport = require('passport')
 const localStrategy = require('passport-local')
 const User = require('./models/user')
+const helmet = require('helmet')
+const MongoStore = require('connect-mongo');
+
+
+const mongoSanitize = require('express-mongo-sanitize')
 
 const campgroundRoute = require('./routes/campgroundRoute')
 const reviewRoute = require('./routes/reviewRoute');
 const usersRoute = require('./routes/usersRoute')
 
-
+// const db_url = process.env.DB_URL
+// 'mongodb://127.0.0.1:27017/yelp-camp'
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp');
 
 const db = mongoose.connection
@@ -34,17 +40,89 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(mongoSanitize())
+app.use(helmet({contentSecurityPolicy: false}))
+
+
+
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com/",
+    // "https://api.tiles.mapbox.com/",
+    // "https://api.mapbox.com/",
+    "https://kit.fontawesome.com/",
+    "https://cdnjs.cloudflare.com/",
+    "https://cdn.jsdelivr.net",
+    "https://cdn.maptiler.com/", // add this
+];
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com/",
+    "https://stackpath.bootstrapcdn.com/",
+    // "https://api.mapbox.com/",
+    // "https://api.tiles.mapbox.com/",
+    "https://fonts.googleapis.com/",
+    "https://use.fontawesome.com/",
+    "https://cdn.jsdelivr.net",
+    "https://cdn.maptiler.com/", // add this
+];
+const connectSrcUrls = [
+    // "https://api.mapbox.com/",
+    // "https://a.tiles.mapbox.com/",
+    // "https://b.tiles.mapbox.com/",
+    // "https://events.mapbox.com/",
+    "https://api.maptiler.com/", // add this
+];
+const fontSrcUrls = [];
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: [],
+            connectSrc: ["'self'", ...connectSrcUrls],
+            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+            workerSrc: ["'self'", "blob:"],
+            objectSrc: [],
+            imgSrc: [
+                "'self'",
+                "blob:",
+                "data:",
+                "https://res.cloudinary.com/dadxymex0/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
+                "https://images.unsplash.com/",
+                "https://api.maptiler.com/",
+                "https://picsum.photos/",
+                "https://fastly.picsum.photos/",
+                "https://www.irctctourism.com/famous-places-in-india/img/1stsection.jpg"
+            ],
+            fontSrc: ["'self'", ...fontSrcUrls],          
+        },
+    })
+);
+
+const store = MongoStore.create({
+    mongoUrl: 'mongodb://127.0.0.1:27017/yelp-camp',
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+        secret: 'thisshouldbeabettersecret!'
+    }
+});
+
+store.on("error", function(e){
+    console.log("SESSION STORE ERROR", e)
+})
 
 const sessionConfig = {
-    secret: 'Its a secret',
+    store,
+    name : 'session',
+    secret: 'thisisabettersecret',
     resave: false,
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
+        // secure : true,
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }
+
 app.use(session(sessionConfig))
 app.use(flash())
 

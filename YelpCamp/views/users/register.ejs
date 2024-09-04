@@ -1,21 +1,36 @@
 <% layout('layouts/boilerplate') %>
-<h1>REGISTER</h1>
-<hr>
-<form action="/register" class="validated-form" novalidate method="post">
-    <div class="mb-3">
-        <label class="form-label" for="username">Username</label>
-        <input class="form-control" type="text" id="username" name="username" required>
-        <div class="valid-feedback">Sure, it will work</div>
+
+<div class="container mb-4">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+            <div class="card">
+                <img src="https://picsum.photos/400?random=1"
+                    alt="" class="card-img-top">
+                <div class="card-body">
+                    <h3 class="card-title">REGISTER</h3>
+                    <form action="/register" class="validated-form" novalidate method="post">
+                        <div class="mb-3">
+                            <label class="form-label" for="username">Username</label>
+                            <input class="form-control" type="text" id="username" name="username" required autofocus>
+                            <div class="valid-feedback">Sure, it will work</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="email">Email</label>
+                            <input class="form-control" type="email" id="email" name="email" required>
+                            <div class="valid-feedback">Sure, it will work</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="password">Password</label>
+                            <input class="form-control" type="password" id="password" name="password" required>
+                            <div class="valid-feedback">Sure, it will work</div>
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-lg btn-success">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
     </div>
-    <div class="mb-3">
-        <label class="form-label" for="email">Email</label>
-        <input class="form-control" type="email" id="email" name="email" required>
-        <div class="valid-feedback">Sure, it will work</div>
-    </div>
-    <div class="mb-3">
-        <label class="form-label" for="password">Password</label>
-        <input class="form-control" type="password" id="password" name="password" required>
-        <div class="valid-feedback">Sure, it will work</div>
-    </div>
-    <button class="btn btn-lg btn-success">Register</button>
-</form>
+</div>
